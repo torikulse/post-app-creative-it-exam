@@ -1,29 +1,49 @@
 const title = document.getElementById("title");
 const description = document.getElementById("description");
 const postBtn = document.getElementById("postBtn");
-
 const updateBtn = document.getElementById("updateBtn");
 const display = document.getElementById("display");
-let editBtn;
-let deleteBtn;
+
 let updateIndex = null; //get index by press edit butthon for update in update function
 
 let data = [
-  { title: "This is title", description: "This is description" },
-  { title: "This is title2", description: "This is description2" },
-  { title: "This is title3", description: "This is description3" },
+  {
+    id: 1732876739046,
+    type: "post",
+    title: "This is title",
+    description: "This is description",
+  },
+  {
+    id: 1732876764862,
+    type: "post",
+    title: "This is title2",
+    description: "This is description2",
+  },
+  {
+    id: 1732876777358,
+    type: "game",
+    title: 99999,
+    description: 9999999,
+  },
+  {
+    id: 1732876794021,
+    type: "post",
+    title: "This is title3",
+    description: "This is description3",
+  },
 ];
 
 function deleteItem(i) {
   data.splice(i, 1);
-  display.innerHTML = "";
+
   displayRender();
 }
 
 function displayRender() {
-  data.map((e, i) => {
+  display.innerHTML = "";
+  data.reverse().map((e, i) => {
     display.innerHTML += `
-            <div class="w-80 border p-4 rounded-lg flex flex-col gap-4">
+            <div class="border p-4 rounded-lg flex flex-col gap-4">
           <div class="flex flex-col gap-4">
             <h1 class="text-2xl font-bold">${e.title}</h1>
             <p>
@@ -31,21 +51,24 @@ function displayRender() {
             </p>
           </div>
           <div class="text-right">
-            <button
-              onclick="editItem(${i})"
-              class="py-2 px-4 bg-blue-600 border text-white rounded-md editBtn"
-            >
-              Edit
-            </button>
-            <button
-            onclick="playGame()"
-              class="py-2 px-4 bg-blue-600 border text-white rounded-md playBtn hidden"
-            >
-              Play
-            </button>
+            ${
+              e.type == "post"
+                ? `<button
+                onclick="editItem(${i})"
+                class="py-2 px-4 bg-blue-600 border text-white rounded-md"
+              >
+                Edit
+              </button>`
+                : ""
+            }
+            ${
+              e.type == "game"
+                ? `<button onclick="playGame()" class="py-2 px-4 bg-blue-600 border text-white rounded-md">Play</button>`
+                : ""
+            }
             <button
               onclick="deleteItem(${i})"
-              class="py-2 px-4 bg-red-600 border text-white rounded-md deleteBtn"
+              class="py-2 px-4 bg-red-600 border text-white rounded-md"
             >
               Delete
             </button>
@@ -53,54 +76,77 @@ function displayRender() {
         </div>
             `;
   });
-  console.log(data);
-  editBtn = document.querySelectorAll(".editBtn");
-  deleteBtn = document.querySelectorAll(".deleteBtn");
-  playBtn = document.querySelectorAll(".playBtn");
+
+  title.value = "";
+  description.value = "";
+
+  //check data array list
+  console.log(data.reverse());
 }
 displayRender();
 
 function post() {
   if (title.value !== "" && description.value !== "") {
-    data.push({ title: title.value, description: description.value });
-    display.innerHTML = "";
-    displayRender();
-    if (!isNaN(Number(title.value))) {
-      editBtn[data.length - 1].classList.add("hidden");
-      playBtn[data.length - 1].classList.remove("hidden");
+    let numberTitle = Number(title.value);
+    let numberDescription = Number(description.value);
+    const isNotNumber =
+      isNaN(numberTitle) || isNaN(numberDescription) ? true : false;
+    if (isNotNumber) {
+      data.push({
+        id: Date.now(),
+        type: "post",
+        title: title.value,
+        description: description.value,
+      });
+
+      displayRender();
+    } else {
+      data.push({
+        id: Date.now(),
+        type: "game",
+        title: numberTitle,
+        description: numberDescription,
+      });
+
+      displayRender();
     }
-    title.value = "";
-    description.value = "";
   } else {
     alert("Fill title and description both");
   }
 }
+
 function editItem(i) {
   title.value = data[i].title;
   description.value = data[i].description;
+
   updateBtn.classList.remove("hidden");
   postBtn.classList.add("hidden");
-  display.innerHTML = "";
-  displayRender();
+
   updateIndex = i;
 }
 
 function update() {
   if (title.value !== "" && description.value !== "") {
-    data[updateIndex] = {
-      title: title.value,
-      description: description.value,
-    };
-    display.innerHTML = "";
+    let numberTitle = Number(title.value);
+    let numberDescription = Number(description.value);
+    const isNotNumber =
+      isNaN(numberTitle) || isNaN(numberDescription) ? true : false;
+    console.log(isNotNumber);
+    if (isNotNumber) {
+      data[updateIndex].type = "post";
+      data[updateIndex].title = title.value;
+      data[updateIndex].description = description.value;
+
+      displayRender();
+    } else {
+      data[updateIndex].type = "game";
+      data[updateIndex].title = numberTitle;
+      data[updateIndex].description = numberDescription;
+
+      displayRender();
+    }
     updateBtn.classList.add("hidden");
     postBtn.classList.remove("hidden");
-    displayRender();
-    if (!isNaN(Number(title.value))) {
-      editBtn[updateIndex].classList.add("hidden");
-      playBtn[updateIndex].classList.remove("hidden");
-    }
-    title.value = "";
-    description.value = "";
   } else {
     alert("Fill title and description both");
   }
