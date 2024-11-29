@@ -41,7 +41,7 @@ function deleteItem(i) {
 
 function displayRender() {
   display.innerHTML = "";
-  data.reverse().map((e, i) => {
+  data.map((e, i) => {
     display.innerHTML += `
             <div class="border p-4 rounded-lg flex flex-col gap-4">
           <div class="flex flex-col gap-4">
@@ -81,7 +81,7 @@ function displayRender() {
   description.value = "";
 
   //check data array list
-  console.log(data.reverse());
+  console.log(data);
 }
 displayRender();
 
